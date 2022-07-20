@@ -75,8 +75,9 @@ jobs:
         # This step uses the identity token to provision an ephemeral certificate
         # against the sigstore community Fulcio instance.
         run: |
+          echo -e ${{ steps.meta.outputs.tags }}
           cosign sign --key env://COSIGN_PRIVATE_KEY \
             -a "repo=${{ github.repository }}" \
             -a "workflow=${{ github.workflow }}" \
             -a "ref=${{ github.sha }}" \
-            ${{ steps.meta.outputs.tags[0] }}
+            ${{ steps.meta.outputs.tags }}

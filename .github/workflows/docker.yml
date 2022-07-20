@@ -39,6 +39,7 @@ jobs:
         if: github.event_name != 'pull_request'
         uses: docker/login-action@d398f07826957cd0a18ea1b059cf1207835e60bc
         with:
+          registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 

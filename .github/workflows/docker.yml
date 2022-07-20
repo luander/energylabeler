@@ -79,4 +79,4 @@ jobs:
             -a "repo=${{ github.repository }}" \
             -a "workflow=${{ github.workflow }}" \
             -a "ref=${{ github.sha }}" \
-            ${{ steps.meta.outputs.tags }}
+            ${{ steps.meta.outputs.tags[0] }}

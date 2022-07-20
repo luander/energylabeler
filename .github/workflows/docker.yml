@@ -62,9 +62,6 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Write signing key to disk (only needed for `cosign sign --key`)
-        run: echo "${{ secrets.COSIGN_PRIVATE_KEY }}" > cosign.key
-
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
       # repository is public to avoid leaking data.  If you would like to publish
@@ -72,9 +69,9 @@ jobs:
       # https://github.com/sigstore/cosign
       - name: Sign the published Docker image
         if: ${{ github.event_name != 'pull_request' }}
+        env:
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
         # This step uses the identity token to provision an ephemeral certificate
         # against the sigstore community Fulcio instance.
-        run: cosign sign --key cosign.key ${{ steps.meta.outputs.tags }}@${{ steps.build-and-push.outputs.digest }}
-
-      - name: Delete signing key from disk
-        run: rm -f cosign.key
+        run: cosign sign --key env://COSIGN_PRIVATE_KEY ${{ steps.meta.outputs.tags }}@${{ steps.build-and-push.outputs.digest }}
